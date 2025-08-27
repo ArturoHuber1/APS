@@ -35,7 +35,7 @@ def ortogonalidad(f, g):
     print (f"{producto_interno}")
     
     if producto_interno < tol:
-        print(f"las funciones son ortogonales")
+        print("las funciones son ortogonales")
     
     
 ######################## Punto 1 y 2 ###################

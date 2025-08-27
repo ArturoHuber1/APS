@@ -37,7 +37,43 @@ def ortogonalidad(f, g):
     if producto_interno < tol:
         print("las funciones son ortogonales")
     
+        
+
+def graficar_correlacion(f, g, fs, titulo1="Señales originales", titulo2="Correlación cruzada"):
+    """
+    Grafica dos señales discretas y su correlación cruzada lineal.
     
+    Parámetros:
+        f, g : arrays de NumPy (misma longitud)
+        fs   : frecuencia de muestreo (Hz) para mostrar tiempo y lag correctos
+        titulo1, titulo2 : títulos de los gráficos
+    """
+    N = len(f)
+    t = np.arange(N) / fs
+
+    # Correlación cruzada lineal
+    corr = np.correlate(f, g, mode="full")
+    lags = np.arange(-N+1, N) / fs  # desfase en segundos
+
+    # Gráficos
+    fig, axs = plt.subplots(2, 1, figsize=(12, 6))
+
+    # Señales originales
+    axs[0].plot(t, f, label="x(t)")
+    axs[0].plot(t, g, label="y(t)")
+    axs[0].set_title(titulo1)
+    axs[0].legend()
+    axs[0].grid(True)
+
+    # Correlación cruzada
+    axs[1].plot(lags, corr)
+    axs[1].set_title(titulo2)
+    axs[1].set_xlabel("Desplazamiento (lag)")
+    axs[1].grid(True)
+
+    plt.tight_layout()
+    plt.show()
+
 ######################## Punto 1 y 2 ###################
 # Señal original
 AmplitudOriginal = 1
@@ -122,15 +158,26 @@ plt.show()
 ################### Punto 6 #######################
 
 # Parámetros
-
 duracion = 0.05    
 pulso_duracion = 0.01  # 10 ms
+N = 500
+t = np.linspace(0, duracion, N, endpoint=False)
 
-# Vector de tiempo
-t = np.linspace(0, duracion, 500, endpoint=False)
-
-# Pulso rectangular: 1 durante 10 ms, luego 0
+# Pulso rectangular
 pulso = np.where(t < pulso_duracion, 1.0, 0.0)
+
+# Muestreo
+fs = N / duracion
+Ts = 1 / fs
+
+# Energía 
+E = np.sum(pulso**2)
+
+
+print("Frecuencia de muestreo:", fs, "Hz")
+print("Tiempo entre muestras:", Ts, "s")
+print ("Numero de muestras:", N)
+print("Energía:", E)
 
 # Graficar
 plt.figure(figsize=(10,4))
@@ -144,3 +191,10 @@ plt.show()
 
 
 ortogonalidad(Original, y2)
+
+
+######################### punto 7 #####################
+
+# Correlación cruzada
+
+graficar_correlacion(Original, y2, fs)

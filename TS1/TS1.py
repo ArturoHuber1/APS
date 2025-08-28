@@ -39,7 +39,7 @@ def ortogonalidad(f, g):
     
         
 
-def graficar_correlacion(f, g, fs, titulo1="Señales originales", titulo2="Correlación cruzada"):
+def graficar_correlacion(f, g, fs):
     """
     Grafica dos señales discretas y su correlación cruzada lineal.
     
@@ -48,6 +48,9 @@ def graficar_correlacion(f, g, fs, titulo1="Señales originales", titulo2="Corre
         fs   : frecuencia de muestreo (Hz) para mostrar tiempo y lag correctos
         titulo1, titulo2 : títulos de los gráficos
     """
+    titulo1="Señales originales"
+    titulo2="Correlación cruzada"
+    
     N = len(f)
     t = np.arange(N) / fs
 
@@ -198,3 +201,36 @@ ortogonalidad(Original, y2)
 # Correlación cruzada
 
 graficar_correlacion(Original, y2, fs)
+graficar_correlacion(Original, pulso, fs)
+
+##################### ####################
+
+# Parámetros
+n = 1000       
+f = 5           
+t = np.linspace(0, 1, n, endpoint=False)  
+
+# Definimos alfa y beta
+alpha = 2 * np.pi * f * t
+beta  = 2 * 2 * np.pi * f * t   # doble frecuencia
+
+# Lado izquierdo: 2*sin(alpha)*sin(beta)
+x = 2 * np.sin(alpha) * np.sin(beta)
+
+# Lado derecho: cos(alpha - beta) - cos(alpha + beta)
+y = np.cos(alpha - beta) - np.cos(alpha + beta)
+
+# Verificación numérica (error máximo)
+error_max = np.max(np.abs(x - y))
+print("Error máximo entre ambas funciones:", error_max)
+
+# Graficamos
+plt.figure(figsize=(10,5))
+plt.plot(t, x, label = "x")
+plt.plot(t, y, '.',alpha=0.5, label = "y")
+plt.title("Verificación numérica de la identidad trigonométrica")
+plt.xlabel("Tiempo [s]")
+plt.ylabel("Amplitud")
+plt.legend()
+plt.grid(True)
+plt.show()

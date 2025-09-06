@@ -73,15 +73,19 @@ def convolucion(x, h, nombre):
     None.
 
     """
+    y = np.convolve(x, h, mode ="same")
     
-    y = np.convolve(x, h)
+    Ts = 1/fs
+    N = len(y)
+    t = np.arange(N) * Ts
+    
         
     # Grafico
     plt.figure(figsize=(10,5))
-    plt.plot(y, label="Salida")
-    plt.axvline(x=500, color = 'black', linestyle='--', label='n = 500')
+    plt.plot(t, y, label="Salida")
+    plt.axvline(x=0.01, color = 'black', linestyle='--', label='s = 0.01')
     plt.title(f"Salida de la señal {nombre} mediante convolución")
-    plt.xlabel("Muestra [n]")
+    plt.xlabel("Tiempo [s]")
     plt.ylabel("Amplitud")
     plt.grid(True)
     plt.legend()

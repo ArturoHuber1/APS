@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TS1 import Original, y2, s_am, s_clip, sq, pulso
+from TS1 import Original, y2, s_am, s_clip, sq, pulso, fs
 
 def sistema_lti(x, nombre):
     """
@@ -17,7 +17,9 @@ def sistema_lti(x, nombre):
     y : Vector
         Señal de salida y[n]
     """
+    Ts = 1/fs
     N = len(x)
+    t = np.arange(N) * Ts
     y = np.zeros(N, dtype=float)
 
     for n in range(N):
@@ -42,13 +44,16 @@ def sistema_lti(x, nombre):
         
     # Grafico
     plt.figure(figsize=(10,5))
-    plt.plot(y, label="Salida")
+    plt.plot(t, y, label="Salida")
     plt.title(f"Respuesta a la señal {nombre}")
-    plt.xlabel("Muestra [n]")
+    plt.xlabel("Tiempo [s]")
     plt.ylabel("Amplitud")
     plt.grid(True)
     plt.legend()
     plt.show()
+    
+
+    print(f"Potencia de la señal {nombre} = {np.mean(y**2):.3f}")
 
     return y
 
@@ -74,6 +79,7 @@ def convolucion(x, h, nombre):
     # Grafico
     plt.figure(figsize=(10,5))
     plt.plot(y, label="Salida")
+    plt.axvline(x=500, color = 'black', linestyle='--', label='n = 500')
     plt.title(f"Salida de la señal {nombre} mediante convolución")
     plt.xlabel("Muestra [n]")
     plt.ylabel("Amplitud")
@@ -153,8 +159,8 @@ def punto2(x, impulso):
     plt.legend()
     plt.show()      
             
-            
-
+N = 500          
+print(f"Para las simulaciones se toma un fs = {fs} y una duracion de {N/fs:.2f} \n")
 sistema_lti(Original, "Original")                      # Senoidal f: 2KHz A:1 fase :0
 sistema_lti(y2, "Desplazada y Amplificada")            # Senoidal f: 2KHz A:2 fase :p1/2
 sistema_lti(s_am, "Modulada")                          # Señal original modulada
@@ -163,8 +169,8 @@ sistema_lti(sq, "Cuadrada")                            # Cuadrada f: 4KHz A:1
 sistema_lti(pulso, "Pulso")                            # Pulso de 10ms
 
 # Generar señal impulso
-N = 500
-impulso = np.zeros(500)
+
+impulso = np.zeros(N)
 impulso[0] = 1 
 
 h = sistema_lti(impulso, "impulso")                    # h: respuesta al impulso

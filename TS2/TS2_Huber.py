@@ -73,7 +73,7 @@ def convolucion(x, h, nombre):
     None.
 
     """
-    y = np.convolve(x, h, mode ="same")
+    y = np.convolve(x, h)
     
     Ts = 1/fs
     N = len(y)
@@ -91,14 +91,14 @@ def convolucion(x, h, nombre):
     plt.legend()
     plt.show()
 
-
+    print(f"Potencia de la salida de la señal {nombre} calculada mediante convolución = {np.mean(y[:500]**2):.3f}")
 
 def punto2(x, impulso):
     """   
     Hallar la respuesta al impulso y la salida correspondiente a una señal de entrada senoidal
     en los sistemas definidos mediante las siguientes ecuaciones en diferencias:
-     primera ecuacion : y[n] =  x[n] + 3 x[n-10]
-     segunda ecuacion : y[n] =  x[n] + 3 y[n-10]
+    primera ecuacion : y[n] =  x[n] + 3 x[n-10]
+    segunda ecuacion : y[n] =  x[n] + 3 y[n-10]
         
     Parameters
     ----------
@@ -115,30 +115,28 @@ def punto2(x, impulso):
     
     N = len(impulso)
     h1 = np.zeros(N, dtype=float)       # h1 : respuesta al impulso de la primera ecuacion
-    h2 = np.zeros(N, dtype=float)       # h1 : respuesta al impulso de la segunda ecuacion
-    y1 = np.zeros(N, dtype=float)       # h1 : respuesta de la señal senoidal de la primera ecuacion
-    y2 = np.zeros(N, dtype=float)       # h1 : respuesta de la señal senoidal de la segunda ecuacion
+    h2 = np.zeros(N, dtype=float)       # h2 : respuesta al impulso de la segunda ecuacion
+    y1 = np.zeros(N, dtype=float)       # y1 : respuesta de la señal senoidal de la primera ecuacion
+    y2 = np.zeros(N, dtype=float)       # y2 : respuesta de la señal senoidal de la segunda ecuacion
     
     
-    # Calcular las salidas del impulso (h1) y de la senoidal (y1) de la primera ecuacion
+    # Calcular las salidas del impulso (h1 y h2) y de la senoidal (y1 e y2) de la primera ecuacion
     for n in range (N):
     
         h1[n] = impulso[n]
         y1[n] = x[n]
         
-        if (n-10) >= 0:
-            h1[n] += 3 * impulso[n-10]
-            y1[n] += 3 * x[n-10]
-    
-    # Calcular las salidas del impulso (h2) y de la senoidal (y2) de la segunda ecuacion
-    for n in range (N):
-    
         h2[n] = impulso[n]
         y2[n] = x[n]
         
         if (n-10) >= 0:
-            h2[n] += 3 * h2[n-10]
+            h1[n] += 3 * impulso[n-10]      # Primera ecuación
+            y1[n] += 3 * x[n-10]
+            
+            h2[n] += 3 * h2[n-10]           # Sefgunda ecuación
             y2[n] += 3 * y2[n-10]
+    
+
 
 
     # Grafico
@@ -154,16 +152,19 @@ def punto2(x, impulso):
 
     # Grafico
     plt.figure(figsize=(10,5))
-    plt.plot(h2, label="Respuesta al impulso de la segunda ecuacion")
+    plt.plot(h2,'x', label="Respuesta al impulso de la segunda ecuacion")
     plt.plot(y2, label="Respuesta de la señal senoidal la segunda ecuacion")
+    plt.yscale('log')
+    #plt.xscale('log')
     plt.title("Respuestas de la segunda ecuacion")
     plt.xlabel("Muestra [n]")
     plt.ylabel("Amplitud")
     plt.grid(True)
     plt.legend()
     plt.show()      
+    
             
-N = 500          
+N = 500         
 print(f"Para las simulaciones se toma un fs = {fs} y una duracion de {N/fs:.2f} \n")
 sistema_lti(Original, "Original")                      # Senoidal f: 2KHz A:1 fase :0
 sistema_lti(y2, "Desplazada y Amplificada")            # Senoidal f: 2KHz A:2 fase :p1/2
@@ -171,7 +172,7 @@ sistema_lti(s_am, "Modulada")                          # Señal original modulad
 sistema_lti(s_clip, "Modulada y recortada")            # Señal anterior recortada
 sistema_lti(sq, "Cuadrada")                            # Cuadrada f: 4KHz A:1
 sistema_lti(pulso, "Pulso")                            # Pulso de 10ms
-
+print("\n\n")
 # Generar señal impulso
 
 impulso = np.zeros(N)

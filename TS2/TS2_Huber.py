@@ -164,7 +164,7 @@ def punto2(x, impulso):
     plt.show()      
     
             
-N = 500         
+N = 500
 print(f"Para las simulaciones se toma un fs = {fs} y una duracion de {N/fs:.2f} \n")
 sistema_lti(Original, "Original")                      # Senoidal f: 2KHz A:1 fase :0
 sistema_lti(y2, "Desplazada y Amplificada")            # Senoidal f: 2KHz A:2 fase :p1/2

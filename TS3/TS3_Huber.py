@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+# =========== (a) PSD de senoidales =============
 # Parámetros
 N = 1000
 fs = 1000
@@ -16,16 +18,16 @@ plt.figure(figsize=(12, 6))
 
 for i, k0 in enumerate(k0_values):
     
-    f0 = k0 * df                                             # frecuencia en Hz
-    x = amp* np.sin(2 * np.pi * f0 * t)                      # señal
+    f0 = k0 * df                                 # frecuencia en Hz
+    x = amp* np.sin(2 * np.pi * f0 * t)          # señal
     
     # FFT y PSD
-    X = np.fft.fft(x, N)
-    psd = (np.abs(X)**2) / N                                 # densidad espectral
+    X = np.fft.fft(x, N)                         # FFT
+    psd = (np.abs(X)**2) / N                     # densidad espectral
     
     # Eje de frecuencias
     freqs = np.fft.fftfreq(N, 1/fs)
-    # Gráfica
+    # Grafico
     plt.subplot(3, 1, i+1)
     plt.plot(freqs[:N//2], 10*np.log10(psd[:N//2] + 1e-12),'x')
     plt.title(f"PSD para k0 = {k0:.2f} (f0 = {f0:.2f} Hz)")
@@ -40,15 +42,15 @@ plt.show()
 # ====== (b) Verificación de Parseval ======
 for k0 in k0_values:
     f0 = k0 * df
-    x = np.sin(2 * np.pi * f0 * t)
+    x = amp * np.sin(2 * np.pi * f0 * t)
    
 
     X = np.fft.fft(x, N)
     
-    energia_tiempo = np.sum(np.abs(x)**2)
-    energia_freq = np.sum(np.abs(X)**2) / N
+    energia_tiempo = np.sum(np.abs(x)**2)/N
+    energia_freq = np.sum(np.abs(X)**2) / N**2
     
-    print(f"k0 = {k0:.2f} -> Energía tiempo = {energia_tiempo:.2f}, Energía freq = {energia_freq:.2f}")
+    print(f"f = {f0:.2f} : Potencia temporal = {energia_tiempo:.2f}, Potencia espectral = {energia_freq:.2f}")
 
 
 # ====== (c) Experimento con zero padding ======
@@ -60,8 +62,8 @@ eps = 1e-12  # para evitar log(0)
 
 for i, k0 in enumerate(k0_values):
     f0 = k0 * df
-    x = np.sin(2 * np.pi * f0 * t)
-    x = x / np.sqrt(np.mean(x**2))
+    x = amp * np.sin(2 * np.pi * f0 * t)
+    #x = x / np.sqrt(np.mean(x**2))
     
     # Agregar ceros
     x_pad = np.concatenate([x, np.zeros(9*N)])
@@ -74,12 +76,11 @@ for i, k0 in enumerate(k0_values):
     freqs_pad = np.fft.fftfreq(N_pad, 1/fs)
     
     plt.figure(figsize=(12, 6))
-    #plt.subplot(3, 1, i+1)
     plt.plot(freqs_pad[:N_pad//2], psd_pad_db[:N_pad//2],'.')
     plt.title(f"PSD (dB) con Zero Padding para k0 = {k0:.2f} (f0 = {f0:.2f} Hz)")
     plt.xlabel("Frecuencia [Hz]")
     plt.ylabel("PSD [dB]")
     plt.grid()
-
-#plt.tight_layout()
     plt.show()
+
+print(f"la resolucion de la frecuencia es: {fs/N_pad}Hz")

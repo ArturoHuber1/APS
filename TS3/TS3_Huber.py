@@ -29,7 +29,7 @@ for i, k0 in enumerate(k0_values):
     freqs = np.fft.fftfreq(N, 1/fs)
     # Grafico
     plt.subplot(3, 1, i+1)
-    plt.plot(freqs[:N//2], 10*np.log10(psd[:N//2] + 1e-12),'x')
+    plt.plot(freqs[:N//2], 10*np.log10(psd[:N//2] + 1e-12),'.')
     plt.title(f"PSD para k0 = {k0:.2f} (f0 = {f0:.2f} Hz)")
     plt.xlabel("Frecuencia [Hz]")
     plt.ylabel("Amplitud [dB]")

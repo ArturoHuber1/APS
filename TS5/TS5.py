@@ -101,3 +101,43 @@ plt.legend()
 plt.grid(True)
 plt.show()
 # %%
+plt.figure()
+plt.plot(wav_data)
+plt.grid(True)
+
+
+N = len(wav_data)
+cantidad_promedios = 9
+nperseg = N // cantidad_promedios
+f, Pxx = sig.welch(ecg_one_lead, fs=fs_audio, nperseg = nperseg, window = 'flattop', nfft = 5 * N)
+
+
+total_power = np.sum(Pxx)
+cumsum = np.cumsum(Pxx) / total_power
+
+# niveles inferior y superior
+percentil = 0.95
+low = (1 - percentil) / 2
+high = 1 - low
+
+# buscar índices
+indiceLow = np.searchsorted(cumsum, low)
+indiceHigh = np.searchsorted(cumsum, high)
+
+bandWith = f[indiceLow:indiceHigh]
+
+print (f"frecuencia baja: {bandWith[0]:.2f}, frecuencia alta {bandWith[-1]:.2f}")
+print (f"ancho de banda {bandWith[-1] - bandWith[0]:.2f}")
+
+# Graficar
+ymin, ymax = plt.ylim()   # límites actuales del eje y
+
+plt.figure(figsize=(10,5))
+plt.plot(f, Pxx)   
+plt.xlim(0,1500)
+plt.title("PSD de PPG sin ruido - Método de Welch")
+plt.xlabel("Frecuencia [Hz]")
+plt.axvspan(bandWith[0], bandWith[-1],color = "grey", alpha=0.3, label = f" ancho de banda al {percentil *  100:.0f} % de energia")
+plt.legend()
+plt.grid(True)
+plt.show()
